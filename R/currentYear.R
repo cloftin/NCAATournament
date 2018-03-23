@@ -225,5 +225,5 @@ currentYear <- function() {
   }
 
   winners <- champ %>% filter(bpred == 1) %>% select(Year, Team, Region, Seed)
-  winners
+  return(winners)
 }

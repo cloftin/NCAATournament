@@ -14,7 +14,7 @@ makePredictions <- function() {
   test <- test[order(test$GID),]
 
   gids <- test %>% group_by(GID) %>% summarise(gamec = sum(bpred), count = n()) %>%
-    filter(gamec != 1) %>% as.data.frame() %>% select(GID)
+    filter(gamec != 1 & count == 2) %>% as.data.frame() %>% select(GID)
   gids <- as.vector(gids$GID)
   w <- which(test$GID %in% gids)
 
@@ -31,21 +31,22 @@ makePredictions <- function() {
   test$Correct <- ifelse(test$Result == test$bpred, 1, 0)
   plyr::count(test$Correct)
 
-  games <- data.frame()
-  for(i in 1:length(unique(test$GID))) {
-    t <- test %>% filter(GID == unique(test$GID)[i])
-    t <- t[order(-t$bpred),]
-    temp <- as.data.frame(matrix(ncol = 0, nrow = 1))
-    temp$GID <- t$GID[1]
-    temp$Year <- t$Year[1]
-    temp$Round <- t$Round[1]
-    temp$PWinner <- t$Team[1]
-    temp$PLoser <- t$Team[2]
-    temp$Winner <- t %>% filter(Result == 1) %>% select(Team) %>% unlist()
-    temp$Loser <- t %>% filter(Result == 0) %>% select(Team) %>% unlist()
-    temp$Correct <- ifelse(temp$PWinner == temp$Winner, 1, 0)
-
-    games <- rbind(games, temp)
-  }
+  return(test)
+  # games <- data.frame()
+  # for(i in 1:length(unique(test$GID))) {
+  #   t <- test %>% filter(GID == unique(test$GID)[i])
+  #   t <- t[order(-t$bpred),]
+  #   temp <- as.data.frame(matrix(ncol = 0, nrow = 1))
+  #   temp$GID <- t$GID[1]
+  #   temp$Year <- t$Year[1]
+  #   temp$Round <- t$Round[1]
+  #   temp$PWinner <- t$Team[1]
+  #   temp$PLoser <- t$Team[2]
+  #   temp$Winner <- t %>% filter(Result == 1) %>% select(Team) %>% unlist()
+  #   temp$Loser <- t %>% filter(Result == 0) %>% select(Team) %>% unlist()
+  #   temp$Correct <- ifelse(temp$PWinner == temp$Winner, 1, 0)
+  #
+  #   games <- rbind(games, temp)
+  # }
 
 }
